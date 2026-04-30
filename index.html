@@ -164,6 +164,73 @@
         will-change: transform, opacity;
       }
 
+      .masquerade-mask {
+        position: absolute;
+        top: 21.2%;
+        left: 35.2%;
+        z-index: 2;
+        width: 32%;
+        aspect-ratio: 2.35;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-130%, -220%) rotate(-28deg) scale(0.54);
+        transform-origin: 54% 56%;
+      }
+
+      .dog-wrap.mask-on .masquerade-mask {
+        animation: mask-tween 3s cubic-bezier(0.18, 0.9, 0.24, 1) both;
+        will-change: transform, opacity;
+      }
+
+      .masquerade-mask::before {
+        position: absolute;
+        inset: 0;
+        content: "";
+        background:
+          radial-gradient(ellipse at 30% 56%, #111 0 12%, transparent 13%),
+          radial-gradient(ellipse at 69% 54%, #111 0 12%, transparent 13%),
+          linear-gradient(90deg, transparent 0 8%, #f3c64e 8% 12%, transparent 12% 88%, #f3c64e 88% 92%, transparent 92%),
+          radial-gradient(ellipse at 50% 15%, rgb(255 255 255 / 0.82), transparent 34%),
+          #f8f1df;
+        border: 0.09em solid #111;
+        border-radius: 49% 51% 46% 45% / 68% 68% 35% 35%;
+        box-shadow:
+          inset 0 -0.2em 0 rgb(243 198 78 / 0.42),
+          0 0.12em 0 rgb(0 0 0 / 0.22);
+        clip-path: polygon(
+          1% 41%,
+          14% 12%,
+          34% 3%,
+          50% 20%,
+          66% 3%,
+          86% 12%,
+          99% 41%,
+          82% 82%,
+          61% 68%,
+          50% 92%,
+          39% 68%,
+          18% 82%
+        );
+      }
+
+      .masquerade-mask::after {
+        position: absolute;
+        top: -18%;
+        left: 50%;
+        width: 18%;
+        aspect-ratio: 1;
+        content: "";
+        background: #f3c64e;
+        border: 0.06em solid #111;
+        border-radius: 50% 50% 45% 45%;
+        box-shadow:
+          -1.05em 0.12em 0 -0.18em #f3c64e,
+          1.05em 0.12em 0 -0.18em #f3c64e,
+          -1.05em 0.12em 0 -0.12em #111,
+          1.05em 0.12em 0 -0.12em #111;
+        transform: translateX(-50%);
+      }
+
       .heart-thought {
         position: absolute;
         top: -4%;
@@ -185,7 +252,7 @@
           0 0 0.08em rgb(255 255 255 / 0.75);
         transform: translate(-18%, 18%) rotate(-9deg) scale(0.42);
         transform-origin: 60% 100%;
-        animation: thought-bubble 11.5s cubic-bezier(0.18, 0.9, 0.22, 1) 4.8s infinite;
+        animation: thought-bubble 28s cubic-bezier(0.18, 0.9, 0.22, 1) 8s infinite;
       }
 
       .heart-thought::before {
@@ -328,6 +395,28 @@
 
       .baby-z-burst.is-active {
         animation: baby-z-burst 1.35s cubic-bezier(0.18, 0.9, 0.22, 1) both;
+      }
+
+      .mommy-burst {
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        z-index: 0;
+        color: rgb(255 255 255 / 0.24);
+        font-size: clamp(6.3rem, 18vw, 15rem);
+        line-height: 0.78;
+        opacity: 0;
+        pointer-events: none;
+        text-shadow:
+          0.025em 0.025em 0 rgb(0 0 0 / 0.16),
+          -0.018em 0.018em 0 rgb(255 51 124 / 0.38),
+          0.018em -0.018em 0 rgb(49 231 255 / 0.32);
+        transform: translate(-50%, -50%) rotate(8deg) scale(0.5);
+        transform-origin: 50% 52%;
+      }
+
+      .mommy-burst.is-active {
+        animation: mommy-burst 1.45s cubic-bezier(0.18, 0.9, 0.22, 1) both;
       }
 
       .letter::before {
@@ -567,22 +656,46 @@
         }
       }
 
+      @keyframes mask-tween {
+        0% {
+          opacity: 0;
+          transform: translate(-130%, -220%) rotate(-28deg) scale(0.54);
+        }
+        20% {
+          opacity: 1;
+          transform: translate(4%, -8%) rotate(8deg) scale(1.12);
+        }
+        30%,
+        68% {
+          opacity: 1;
+          transform: translate(0, 0) rotate(-3deg) scale(1);
+        }
+        82% {
+          opacity: 1;
+          transform: translate(8%, -3%) rotate(5deg) scale(1.03);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(112%, 72%) rotate(20deg) scale(0.76);
+        }
+      }
+
       @keyframes thought-bubble {
         0%,
-        19% {
+        69% {
           opacity: 0;
           transform: translate(-18%, 18%) rotate(-9deg) scale(0.42);
         }
-        28% {
+        74% {
           opacity: 1;
           transform: translate(-6%, -4%) rotate(5deg) scale(1.08);
         }
-        34%,
-        66% {
+        78%,
+        88% {
           opacity: 1;
           transform: translate(0, 0) rotate(-4deg) scale(1);
         }
-        74% {
+        91% {
           opacity: 1;
           transform: translate(3%, -9%) rotate(4deg) scale(1.03);
         }
@@ -683,6 +796,29 @@
         }
       }
 
+      @keyframes mommy-burst {
+        0% {
+          opacity: 0;
+          transform: translate(-42%, -39%) rotate(15deg) scale(0.44);
+        }
+        18% {
+          opacity: 1;
+          transform: translate(-51%, -50%) rotate(-6deg) scale(1.05);
+        }
+        40% {
+          opacity: 0.9;
+          transform: translate(-49%, -47%) rotate(5deg) scale(0.98);
+        }
+        68% {
+          opacity: 0.82;
+          transform: translate(-53%, -52%) rotate(-4deg) scale(1.04);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-58%, -58%) rotate(-16deg) scale(1.14);
+        }
+      }
+
       @keyframes lyric-pop {
         0% {
           opacity: 0;
@@ -723,6 +859,12 @@
           font-size: clamp(2rem, 12vw, 3.8rem);
         }
 
+        .masquerade-mask {
+          top: 22%;
+          left: 34%;
+          width: 34%;
+        }
+
         .egypt-wrap {
           bottom: -11%;
           left: -9%;
@@ -739,6 +881,12 @@
           top: 45%;
           left: 50%;
           font-size: clamp(13rem, 76vw, 20rem);
+        }
+
+        .mommy-burst {
+          top: 45%;
+          left: 50%;
+          font-size: clamp(4.4rem, 24vw, 7.2rem);
         }
 
         .lyrics {
@@ -787,6 +935,7 @@
       <section class="stage">
         <div class="spotlight" aria-hidden="true"></div>
         <div class="baby-z-burst" aria-hidden="true">Z</div>
+        <div class="mommy-burst" aria-hidden="true">MOMMY</div>
         <div class="letter" aria-label="Zuchou letter animation">Z</div>
         <div class="lyrics" aria-live="polite">
           <div class="lyric-word"></div>
@@ -799,6 +948,7 @@
             alt="Zuchou ready for an anniversary disco party"
           />
           <div class="heart-thought" aria-hidden="true">❤️</div>
+          <div class="masquerade-mask" aria-hidden="true"></div>
           <div class="shades" aria-hidden="true"><span></span></div>
         </div>
         <div class="egypt-wrap" aria-hidden="true">
@@ -823,6 +973,7 @@
       const startScreenEl = document.querySelector(".start-screen");
       const letterEl = document.querySelector(".letter");
       const babyZBurstEl = document.querySelector(".baby-z-burst");
+      const mommyBurstEl = document.querySelector(".mommy-burst");
       const lyricWordEl = document.querySelector(".lyric-word");
       const lyricLineEl = document.querySelector(".lyric-line");
       const timingNextEl = document.querySelector(".timing-next");
@@ -837,6 +988,7 @@
       const letterDelay = 650;
       const firstLetterLoopDuration = letters.length * letterDelay;
       const shadesTweenDuration = 2450;
+      const maskTweenDuration = 3000;
       let letterIndex = 0;
       let hasStarted = false;
       let activeLyricCueKey = "";
@@ -875,7 +1027,7 @@
         { word: "happy", line: "happy -- aniversary", time: 28.636 },
         { word: "--", line: "happy -- aniversary", time: 28.825 },
         { word: "aniversary", line: "happy -- aniversary", time: 29.015 },
-        { word: "HONEY", line: "HONEY", time: 30.315 },
+        { word: "HONEY", line: "HONEY", time: 30.815 },
         { word: "happy", line: "happy aniversary", time: 32.64 },
         { word: "aniversary", line: "happy aniversary", time: 34.876 },
         { word: "HONEY", line: "HONEY", time: 35.382 },
@@ -1024,11 +1176,18 @@
           (cue) => currentTime >= cue.start && currentTime < cue.end,
         );
         const shouldShowBabyZ = currentTime >= 37 && currentTime < 38.14;
+        const shouldShowMommy = currentTime >= 39.5 && currentTime < 40.78;
 
         if (shouldShowBabyZ && !babyZBurstEl.classList.contains("is-active")) {
           babyZBurstEl.classList.add("is-active");
         } else if (!shouldShowBabyZ && babyZBurstEl.classList.contains("is-active")) {
           babyZBurstEl.classList.remove("is-active");
+        }
+
+        if (shouldShowMommy && !mommyBurstEl.classList.contains("is-active")) {
+          mommyBurstEl.classList.add("is-active");
+        } else if (!shouldShowMommy && mommyBurstEl.classList.contains("is-active")) {
+          mommyBurstEl.classList.remove("is-active");
         }
 
         if (cueIndex < 0) {
@@ -1087,7 +1246,7 @@
       }
 
       function scheduleShades() {
-        const nextDelay = 6200 + Math.random() * 9800;
+        const nextDelay = 18000 + Math.random() * 26000;
 
         setTimeout(() => {
           dogWrapEl.classList.remove("shades-on");
@@ -1098,6 +1257,21 @@
             dogWrapEl.classList.remove("shades-on");
             scheduleShades();
           }, shadesTweenDuration);
+        }, nextDelay);
+      }
+
+      function scheduleMask() {
+        const nextDelay = 24000 + Math.random() * 36000;
+
+        setTimeout(() => {
+          dogWrapEl.classList.remove("mask-on");
+          void dogWrapEl.offsetWidth;
+          dogWrapEl.classList.add("mask-on");
+
+          setTimeout(() => {
+            dogWrapEl.classList.remove("mask-on");
+            scheduleMask();
+          }, maskTweenDuration);
         }, nextDelay);
       }
 
@@ -1128,6 +1302,7 @@
         syncLyrics();
         startEgyptianCameo();
         scheduleShades();
+        scheduleMask();
         startConfetti();
         window.removeEventListener("keydown", startCard);
       }
