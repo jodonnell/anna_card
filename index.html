@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Anniversary, Honeypie</title>
+    <link rel="icon" href="data:," />
+    <style>
+      :root {
+        --paper-a: #1e9d4f;
+        --paper-b: #f04f8b;
+        --paper-c: #2d7ef7;
+        --paper-d: #ffd84d;
+        --ink: #231f20;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        overflow: hidden;
+        background: var(--paper-a);
+        color: var(--ink);
+        font-family:
+          Impact, Haettenschweiler, "Arial Black", "Franklin Gothic Heavy",
+          sans-serif;
+      }
+
+      .card {
+        position: relative;
+        display: grid;
+        min-height: 100vh;
+        place-items: center;
+        isolation: isolate;
+        animation: paper-flash 4.8s steps(1, end) infinite;
+      }
+
+      .card::before {
+        position: absolute;
+        inset: 0;
+        z-index: -3;
+        content: "";
+        background:
+          radial-gradient(circle at 24% 16%, rgb(255 255 255 / 0.16), transparent 18%),
+          radial-gradient(circle at 78% 34%, rgb(0 0 0 / 0.08), transparent 14%),
+          linear-gradient(132deg, rgb(255 255 255 / 0.1), transparent 34%),
+          repeating-linear-gradient(
+            7deg,
+            rgb(255 255 255 / 0.035) 0 2px,
+            transparent 2px 8px
+          );
+        mix-blend-mode: soft-light;
+        pointer-events: none;
+      }
+
+      .card::after {
+        position: absolute;
+        inset: -20vmax;
+        z-index: -2;
+        content: "";
+        background:
+          conic-gradient(
+            from 0deg,
+            transparent,
+            rgb(255 255 255 / 0.3),
+            transparent 18%,
+            transparent 31%,
+            rgb(255 245 118 / 0.28),
+            transparent 48%,
+            transparent 65%,
+            rgb(255 255 255 / 0.22),
+            transparent
+          );
+        animation: disco-spin 5.5s linear infinite;
+        opacity: 0.72;
+        pointer-events: none;
+      }
+
+      .stage {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        min-height: 620px;
+      }
+
+      .spotlight {
+        position: absolute;
+        inset: auto 7% 1% 7%;
+        height: 22%;
+        border-radius: 50%;
+        background: radial-gradient(ellipse, rgb(0 0 0 / 0.24), transparent 64%);
+        filter: blur(10px);
+        transform: rotate(-3deg);
+        animation: shadow-pop 1.4s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+      }
+
+      .dog-wrap {
+        position: absolute;
+        right: 8%;
+        bottom: -25%;
+        width: min(54vw, 520px);
+        animation:
+          dog-enter 1.35s cubic-bezier(0.18, 0.92, 0.24, 1.08) both,
+          dog-bounce 1.65s ease-in-out 1.35s infinite;
+        transform-origin: 55% 85%;
+      }
+
+      .dog-cutout {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 44% 44% 16% 16%;
+        filter:
+          drop-shadow(0 0 0 white)
+          drop-shadow(10px 14px 0 white)
+          drop-shadow(-10px 12px 0 white)
+          drop-shadow(0 28px 26px rgb(0 0 0 / 0.28));
+      }
+
+      .letter {
+        position: absolute;
+        top: 4%;
+        left: 4%;
+        min-width: 0.85em;
+        color: #ffd72e;
+        font-size: clamp(8rem, 31vw, 18rem);
+        line-height: 0.78;
+        letter-spacing: 0;
+        text-align: center;
+        text-transform: uppercase;
+        text-shadow:
+          0.025em 0.035em 0 rgb(0 0 0 / 0.18),
+          0 0 0.025em rgb(255 255 255 / 0.35);
+        transform: rotate(-8deg);
+        animation: letter-party 0.8s steps(1, end) infinite;
+      }
+
+      .letter::before {
+        position: absolute;
+        inset: -0.13em -0.07em -0.1em;
+        z-index: -1;
+        content: "";
+        background: rgb(255 231 84 / 0.18);
+        clip-path: polygon(5% 13%, 90% 2%, 100% 82%, 12% 100%);
+      }
+
+      .title {
+        position: absolute;
+        left: 5%;
+        bottom: 4%;
+        z-index: 2;
+        max-width: 11ch;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: clamp(1.15rem, 3vw, 2.15rem);
+        font-weight: 900;
+        letter-spacing: 0;
+        line-height: 0.9;
+        text-align: left;
+        text-shadow: 0 3px 0 rgb(0 0 0 / 0.26);
+        text-transform: uppercase;
+      }
+
+      .confetti {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .confetti i {
+        position: absolute;
+        width: 0.72rem;
+        height: 1.45rem;
+        border-radius: 1px;
+        background: var(--piece-color);
+        transform: translateY(-120vh) rotate(0deg);
+        animation: fall var(--fall-time) linear infinite;
+        animation-delay: var(--fall-delay);
+        left: var(--left);
+        opacity: 0.85;
+      }
+
+      @keyframes paper-flash {
+        0%,
+        100% {
+          background-color: var(--paper-a);
+        }
+        14.28% {
+          background-color: #e83f68;
+        }
+        28.56% {
+          background-color: var(--paper-c);
+        }
+        42.84% {
+          background-color: #f49b22;
+        }
+        57.12% {
+          background-color: #8f43d9;
+        }
+        71.4% {
+          background-color: #14b8a6;
+        }
+        85.68% {
+          background-color: #f6cf3f;
+        }
+      }
+
+      @keyframes disco-spin {
+        to {
+          transform: rotate(1turn);
+        }
+      }
+
+      @keyframes dog-enter {
+        0% {
+          opacity: 0;
+          transform: translateX(95vw) rotate(10deg) scale(0.94);
+        }
+        74% {
+          opacity: 1;
+          transform: translateX(-2%) rotate(-2deg) scale(1.02);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0) rotate(0deg) scale(1);
+        }
+      }
+
+      @keyframes dog-bounce {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-1.1%) rotate(0.7deg);
+        }
+      }
+
+      @keyframes shadow-pop {
+        from {
+          opacity: 0;
+          transform: scaleX(0.4) rotate(-3deg);
+        }
+        to {
+          opacity: 1;
+          transform: scaleX(1) rotate(-3deg);
+        }
+      }
+
+      @keyframes letter-party {
+        0%,
+        100% {
+          color: #ffd72e;
+          transform: rotate(-8deg) scale(1);
+        }
+        25% {
+          color: #ffffff;
+          transform: rotate(7deg) scale(1.08);
+        }
+        50% {
+          color: #2ef2ff;
+          transform: rotate(-4deg) scale(0.96);
+        }
+        75% {
+          color: #ff7ad9;
+          transform: rotate(9deg) scale(1.04);
+        }
+      }
+
+      @keyframes fall {
+        to {
+          transform: translateY(120vh) rotate(540deg);
+        }
+      }
+
+      @media (max-width: 640px) {
+        .stage {
+          width: 100vw;
+          min-height: 100vh;
+        }
+
+        .dog-wrap {
+          right: -8%;
+          bottom: -25%;
+          width: 98%;
+        }
+
+        .letter {
+          top: 7%;
+          left: 5%;
+          font-size: clamp(7rem, 38vw, 11rem);
+        }
+
+        .title {
+          top: 4%;
+          right: 1rem;
+          bottom: auto;
+          left: auto;
+          width: 8.75rem;
+          max-width: none;
+          font-size: 0.95rem;
+          text-align: right;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card" aria-label="Animated anniversary disco card for Honeypie">
+      <div class="confetti" aria-hidden="true"></div>
+      <section class="stage">
+        <div class="spotlight" aria-hidden="true"></div>
+        <div class="letter" aria-label="Zuchou letter animation">Z</div>
+        <div class="dog-wrap">
+          <img
+            class="dog-cutout"
+            src="zuchoubase.png"
+            alt="Zuchou ready for an anniversary disco party"
+          />
+        </div>
+        <div class="title">Happy Anniversary Honeypie</div>
+      </section>
+    </main>
+
+    <script>
+      const letters = ["Z", "U", "C", "H", "O", "U"];
+      const letterEl = document.querySelector(".letter");
+      const confettiEl = document.querySelector(".confetti");
+      const confettiColors = ["#ffd72e", "#ff5b93", "#22d3ee", "#ffffff", "#7cfc64"];
+      let letterIndex = 0;
+
+      letters.forEach((letter, index) => {
+        setTimeout(() => {
+          letterEl.textContent = letter;
+          letterIndex = index;
+        }, index * 650);
+      });
+
+      setInterval(() => {
+        letterIndex = (letterIndex + 1) % letters.length;
+        letterEl.textContent = letters[letterIndex];
+      }, 650);
+
+      for (let index = 0; index < 54; index += 1) {
+        const piece = document.createElement("i");
+        piece.style.setProperty("--left", `${Math.random() * 100}%`);
+        piece.style.setProperty(
+          "--piece-color",
+          confettiColors[index % confettiColors.length],
+        );
+        piece.style.setProperty("--fall-time", `${3 + Math.random() * 3.4}s`);
+        piece.style.setProperty("--fall-delay", `${Math.random() * -6}s`);
+        confettiEl.append(piece);
+      }
+    </script>
+  </body>
+</html>
