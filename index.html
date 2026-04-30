@@ -283,6 +283,73 @@
         text-transform: uppercase;
       }
 
+      .lyrics {
+        position: absolute;
+        top: 46%;
+        left: 50%;
+        z-index: 1;
+        display: grid;
+        width: min(72vw, 780px);
+        min-height: 13rem;
+        place-items: center;
+        pointer-events: none;
+        text-align: center;
+        transform: translate(-50%, -50%) rotate(-2deg);
+      }
+
+      .lyric-word {
+        display: inline-block;
+        max-width: 100%;
+        color: #fff36f;
+        font-size: clamp(2.5rem, 7.4vw, 5.9rem);
+        line-height: 0.88;
+        letter-spacing: 0;
+        overflow-wrap: anywhere;
+        text-transform: uppercase;
+        text-shadow:
+          0.055em 0.055em 0 #111,
+          -0.03em 0.035em 0 #ff4fa3,
+          0.03em -0.03em 0 #31e7ff,
+          0 0.1em 0 rgb(0 0 0 / 0.2);
+        transform-origin: 50% 72%;
+      }
+
+      .lyric-word.is-popping {
+        animation: lyric-pop 0.34s cubic-bezier(0.18, 0.92, 0.22, 1.28) both;
+      }
+
+      .lyric-line {
+        position: absolute;
+        top: calc(50% + 5.2rem);
+        left: 50%;
+        width: 100%;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: clamp(0.9rem, 2.3vw, 1.45rem);
+        font-weight: 900;
+        line-height: 1;
+        text-shadow: 0 2px 0 rgb(0 0 0 / 0.35);
+        text-transform: uppercase;
+        transform: translateX(-50%);
+      }
+
+      .lyric-line span {
+        display: inline-block;
+        margin: 0 0.12em;
+        opacity: 0.46;
+        transform: translateY(0.06em) scale(0.94);
+        transition:
+          color 0.16s ease,
+          opacity 0.16s ease,
+          transform 0.16s ease;
+      }
+
+      .lyric-line span.is-active {
+        color: #fff36f;
+        opacity: 1;
+        transform: translateY(-0.05em) scale(1.08) rotate(-2deg);
+      }
+
       .confetti {
         position: absolute;
         inset: 0;
@@ -302,6 +369,53 @@
         animation-delay: var(--fall-delay);
         left: var(--left);
         opacity: 0.85;
+      }
+
+      .timing-helper {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        z-index: 20;
+        display: none;
+        width: min(24rem, calc(100vw - 2rem));
+        padding: 0.9rem;
+        color: #111;
+        font-family: Arial, Helvetica, sans-serif;
+        background: rgb(255 255 255 / 0.92);
+        border: 3px solid #111;
+        box-shadow: 0.35rem 0.35rem 0 rgb(0 0 0 / 0.24);
+      }
+
+      body.is-timing .timing-helper {
+        display: block;
+      }
+
+      .timing-helper strong,
+      .timing-helper span,
+      .timing-helper button {
+        font: inherit;
+      }
+
+      .timing-helper strong {
+        display: block;
+        margin-bottom: 0.45rem;
+        font-weight: 900;
+      }
+
+      .timing-helper p {
+        margin: 0.35rem 0;
+        font-size: 0.9rem;
+        line-height: 1.25;
+      }
+
+      .timing-helper button {
+        margin-top: 0.55rem;
+        padding: 0.45rem 0.65rem;
+        color: white;
+        font-weight: 900;
+        cursor: pointer;
+        background: #111;
+        border: 0;
       }
 
       @keyframes paper-flash {
@@ -448,6 +562,21 @@
         }
       }
 
+      @keyframes lyric-pop {
+        0% {
+          opacity: 0;
+          transform: translateY(0.24em) rotate(-8deg) scale(0.42);
+        }
+        64% {
+          opacity: 1;
+          transform: translateY(-0.06em) rotate(4deg) scale(1.16);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) rotate(0deg) scale(1);
+        }
+      }
+
       @keyframes fall {
         to {
           transform: translateY(120vh) rotate(540deg);
@@ -476,6 +605,21 @@
           top: 7%;
           left: 5%;
           font-size: clamp(7rem, 38vw, 11rem);
+        }
+
+        .lyrics {
+          top: 43%;
+          width: 92vw;
+          min-height: 10rem;
+        }
+
+        .lyric-word {
+          font-size: clamp(2rem, 10.5vw, 4rem);
+        }
+
+        .lyric-line {
+          top: calc(50% + 3.7rem);
+          font-size: 0.78rem;
         }
 
         .title {
@@ -509,6 +653,10 @@
       <section class="stage">
         <div class="spotlight" aria-hidden="true"></div>
         <div class="letter" aria-label="Zuchou letter animation">Z</div>
+        <div class="lyrics" aria-live="polite">
+          <div class="lyric-word"></div>
+          <div class="lyric-line" aria-hidden="true"></div>
+        </div>
         <div class="dog-wrap">
           <img
             class="dog-cutout"
@@ -525,11 +673,25 @@
         <div class="title">Happy Anniversary Honeypie</div>
       </section>
     </main>
+    <aside class="timing-helper" aria-live="polite">
+      <strong>Timing helper</strong>
+      <p>Press Space when each word starts. Press Backspace to undo.</p>
+      <p>Next: <span class="timing-next">Z</span></p>
+      <p>Captured: <span class="timing-count">0</span>/<span class="timing-total">0</span></p>
+      <button class="timing-copy" type="button">Copy timings</button>
+    </aside>
 
     <script>
       const letters = ["Z", "U", "C", "H", "O", "U"];
+      const timingMode = new URLSearchParams(window.location.search).has("timing");
       const startScreenEl = document.querySelector(".start-screen");
       const letterEl = document.querySelector(".letter");
+      const lyricWordEl = document.querySelector(".lyric-word");
+      const lyricLineEl = document.querySelector(".lyric-line");
+      const timingNextEl = document.querySelector(".timing-next");
+      const timingCountEl = document.querySelector(".timing-count");
+      const timingTotalEl = document.querySelector(".timing-total");
+      const timingCopyEl = document.querySelector(".timing-copy");
       const confettiEl = document.querySelector(".confetti");
       const dogWrapEl = document.querySelector(".dog-wrap");
       const egyptWrapEl = document.querySelector(".egypt-wrap");
@@ -540,6 +702,134 @@
       const shadesTweenDuration = 2450;
       let letterIndex = 0;
       let hasStarted = false;
+      let activeLyricCueKey = "";
+      let lyricFrameId = 0;
+      const capturedTimings = [];
+
+      const lyricTimings = [
+        { word: "z", line: "z u c h o u", time: 9.697 },
+        { word: "u", line: "z u c h o u", time: 10.271 },
+        { word: "c", line: "z u c h o u", time: 10.301 },
+        { word: "h", line: "z u c h o u", time: 10.655 },
+        { word: "o", line: "z u c h o u", time: 11.847 },
+        { word: "u", line: "z u c h o u", time: 12.168 },
+        { word: "zoo-shoe", line: "zoo-shoe", time: 12.603 },
+        { word: "z", line: "z u c h o u", time: 12.911 },
+        { word: "u", line: "z u c h o u", time: 14.386 },
+        { word: "c", line: "z u c h o u", time: 14.893 },
+        { word: "h", line: "z u c h o u", time: 15.22 },
+        { word: "o", line: "z u c h o u", time: 16.444 },
+        { word: "u", line: "z u c h o u", time: 16.835 },
+        { word: "zoo-shoe", line: "zoo-shoe", time: 17.157 },
+        { word: "mommy", line: "mommy love me", time: 18.954 },
+        { word: "love", line: "mommy love me", time: 19.406 },
+        { word: "me", line: "mommy love me", time: 19.851 },
+        { word: "and", line: "and baby love you", time: 21.075 },
+        { word: "baby", line: "and baby love you", time: 21.756 },
+        { word: "love", line: "and baby love you", time: 22.365 },
+        { word: "you", line: "and baby love you", time: 23.534 },
+        { word: "z", line: "z u c h o and u", time: 24.054 },
+        { word: "u", line: "z u c h o and u", time: 24.369 },
+        { word: "c", line: "z u c h o and u", time: 25.141 },
+        { word: "h", line: "z u c h o and u", time: 25.733 },
+        { word: "o", line: "z u c h o and u", time: 26.372 },
+        { word: "and", line: "z u c h o and u", time: 26.636 },
+        { word: "u", line: "z u c h o and u", time: 28.114 },
+        { word: "happy", line: "happy aniversary", time: 28.636 },
+        { word: "aniversary", line: "happy aniversary", time: 29.015 },
+        { word: "HONEY", line: "HONEY", time: 30.315 },
+        { word: "happy", line: "happy aniversary", time: 32.64 },
+        { word: "aniversary", line: "happy aniversary", time: 34.876 },
+        { word: "HONEY", line: "HONEY", time: 35.382 },
+        { word: "baby", line: "baby z", time: 37.315 },
+        { word: "z", line: "baby z", time: 39.473 },
+        { word: "he", line: "he love mommy", time: 40.016 },
+        { word: "love", line: "he love mommy", time: 40.63 },
+        { word: "mommy", line: "he love mommy", time: 41.794 },
+        { word: "mommy", line: "mommy love him", time: 42.671 },
+        { word: "love", line: "mommy love him", time: 43.668 },
+        { word: "him", line: "mommy love him", time: 44.586 },
+        { word: "mommy", line: "mommy love me", time: 45.119 },
+        { word: "love", line: "mommy love me", time: 45.588 },
+        { word: "me", line: "mommy love me", time: 46.398 },
+        { word: "Z", line: "Z U C H O and the U", time: 46.84 },
+        { word: "U", line: "Z U C H O and the U", time: 47.192 },
+        { word: "C", line: "Z U C H O and the U", time: 48.099 },
+        { word: "H", line: "Z U C H O and the U", time: 48.729 },
+        { word: "O", line: "Z U C H O and the U", time: 49.337 },
+        { word: "and", line: "Z U C H O and the U", time: 50.015 },
+        { word: "the", line: "Z U C H O and the U", time: 50.194 },
+        { word: "U", line: "Z U C H O and the U", time: 50.917 },
+        { word: "mommy", line: "mommy so kind", time: 51.66 },
+        { word: "so", line: "mommy so kind", time: 52.254 },
+        { word: "kind", line: "mommy so kind", time: 52.501 },
+        { word: "mommy", line: "mommy so nice", time: 53.201 },
+        { word: "so", line: "mommy so nice", time: 53.714 },
+        { word: "nice", line: "mommy so nice", time: 54.13 },
+        { word: "mommy", line: "mommy so patient", time: 55.431 },
+        { word: "so", line: "mommy so patient", time: 56.039 },
+        { word: "patient", line: "mommy so patient", time: 56.336 },
+        { word: "i", line: "i rolled da dice", time: 56.959 },
+        { word: "rolled", line: "i rolled da dice", time: 57.738 },
+        { word: "da", line: "i rolled da dice", time: 58.119 },
+        { word: "dice", line: "i rolled da dice", time: 58.419 },
+        { word: "didnt", line: "didnt pick my parents", time: 58.659 },
+        { word: "pick", line: "didnt pick my parents", time: 59.91 },
+        { word: "my", line: "didnt pick my parents", time: 60.357 },
+        { word: "parents", line: "didnt pick my parents", time: 60.682 },
+        { word: "my", line: "my parents pick me", time: 61.386 },
+        { word: "parents", line: "my parents pick me", time: 62.261 },
+        { word: "pick", line: "my parents pick me", time: 62.575 },
+        { word: "me", line: "my parents pick me", time: 62.988 },
+        { word: "holy", line: "holy shnikes", time: 63.286 },
+        { word: "shnikes", line: "holy shnikes", time: 63.788 },
+        { word: "best", line: "best place i could be", time: 64.552 },
+        { word: "place", line: "best place i could be", time: 64.853 },
+        { word: "i", line: "best place i could be", time: 65.152 },
+        { word: "could", line: "best place i could be", time: 65.43 },
+        { word: "be", line: "best place i could be", time: 66.038 },
+        { word: "mommy", line: "mommy i love you", time: 66.91 },
+        { word: "i", line: "mommy i love you", time: 67.192 },
+        { word: "love", line: "mommy i love you", time: 67.505 },
+        { word: "you", line: "mommy i love you", time: 67.794 },
+      ];
+
+      const lyricCues = lyricTimings.reduce((cues, timing) => {
+        const previousCue = cues.at(-1);
+
+        if (previousCue?.line === timing.line) {
+          return cues;
+        }
+
+        cues.push({
+          start: timing.time,
+          end: 69.6,
+          line: timing.line,
+          lineWords: timing.line.split(" "),
+          word: timing.line,
+        });
+        return cues;
+      }, []);
+
+      lyricCues.forEach((cue, index) => {
+        const nextCue = lyricCues[index + 1];
+        cue.end = nextCue ? Math.max(cue.start + 1.4, nextCue.start - 0.18) : 69.6;
+      });
+
+      if (timingMode) {
+        document.body.classList.add("is-timing");
+        timingTotalEl.textContent = lyricCues.length;
+      }
+
+      function updateTimingHelper() {
+        if (!timingMode) {
+          return;
+        }
+
+        timingCountEl.textContent = capturedTimings.length;
+        timingNextEl.textContent =
+          lyricCues[capturedTimings.length]?.word ?? "done - copy timings";
+      }
 
       function startLetters() {
         letters.forEach((letter, index) => {
@@ -553,6 +843,91 @@
           letterIndex = (letterIndex + 1) % letters.length;
           letterEl.textContent = letters[letterIndex];
         }, letterDelay);
+      }
+
+      function setLyricCue(cueIndex, wordIndex) {
+        const cueKey = `${cueIndex}:${wordIndex}`;
+        const previousCueKey = activeLyricCueKey;
+
+        if (activeLyricCueKey === cueKey) {
+          return;
+        }
+
+        activeLyricCueKey = cueKey;
+
+        if (cueIndex < 0) {
+          lyricWordEl.textContent = "";
+          lyricLineEl.replaceChildren();
+          return;
+        }
+
+        const cue = lyricCues[cueIndex];
+
+        if (!previousCueKey.startsWith(`${cueIndex}:`)) {
+          lyricWordEl.textContent = cue.line;
+          lyricWordEl.classList.remove("is-popping");
+          void lyricWordEl.offsetWidth;
+          lyricWordEl.classList.add("is-popping");
+        }
+
+        lyricLineEl.replaceChildren(
+          ...cue.lineWords.map((word, index) => {
+            const wordEl = document.createElement("span");
+            wordEl.textContent = word;
+            wordEl.classList.toggle("is-active", index <= wordIndex);
+            return wordEl;
+          }),
+        );
+      }
+
+      function syncLyrics() {
+        const currentTime = partyTrackEl.currentTime % 69.6;
+        const cueIndex = lyricCues.findIndex(
+          (cue) => currentTime >= cue.start && currentTime < cue.end,
+        );
+
+        if (cueIndex < 0) {
+          setLyricCue(cueIndex, -1);
+        } else {
+          const cue = lyricCues[cueIndex];
+          const progress = (currentTime - cue.start) / (cue.end - cue.start);
+          const wordIndex = Math.min(
+            cue.lineWords.length - 1,
+            Math.floor(progress * cue.lineWords.length),
+          );
+
+          setLyricCue(cueIndex, wordIndex);
+        }
+
+        lyricFrameId = requestAnimationFrame(syncLyrics);
+      }
+
+      function recordTimingTap() {
+        if (!timingMode || !hasStarted || capturedTimings.length >= lyricCues.length) {
+          return;
+        }
+
+        const cue = lyricCues[capturedTimings.length];
+        capturedTimings.push({
+          word: cue.word,
+          line: cue.line,
+          time: Number(partyTrackEl.currentTime.toFixed(3)),
+        });
+        updateTimingHelper();
+      }
+
+      function undoTimingTap() {
+        if (!timingMode || capturedTimings.length === 0) {
+          return;
+        }
+
+        capturedTimings.pop();
+        updateTimingHelper();
+      }
+
+      function copyTimingData() {
+        const text = JSON.stringify(capturedTimings, null, 2);
+        navigator.clipboard?.writeText(text).catch(() => {});
       }
 
       function startEgyptianCameo() {
@@ -604,6 +979,8 @@
         document.body.classList.add("is-started");
         startPartyTrack();
         startLetters();
+        cancelAnimationFrame(lyricFrameId);
+        syncLyrics();
         startEgyptianCameo();
         scheduleShades();
         startConfetti();
@@ -611,7 +988,28 @@
       }
 
       startScreenEl.addEventListener("click", startCard, { once: true });
-      window.addEventListener("keydown", startCard, { once: true });
+      timingCopyEl.addEventListener("click", copyTimingData);
+      window.addEventListener("keydown", (event) => {
+        if (timingMode && event.code === "Space") {
+          event.preventDefault();
+          if (!hasStarted) {
+            startCard();
+            return;
+          }
+
+          recordTimingTap();
+          return;
+        }
+
+        if (timingMode && event.key === "Backspace") {
+          event.preventDefault();
+          undoTimingTap();
+          return;
+        }
+
+        startCard();
+      });
+      updateTimingHelper();
     </script>
   </body>
 </html>
