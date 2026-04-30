@@ -29,20 +29,45 @@
       body {
         min-height: 100vh;
         overflow: hidden;
-        background: var(--paper-a);
+        background: white;
         color: var(--ink);
         font-family:
           Impact, Haettenschweiler, "Arial Black", "Franklin Gothic Heavy",
           sans-serif;
       }
 
+      body.is-started {
+        background: var(--paper-a);
+      }
+
+      .start-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        display: block;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        cursor: pointer;
+        background: white;
+        border: 0;
+      }
+
+      body.is-started .start-screen {
+        display: none;
+      }
+
       .card {
         position: relative;
-        display: grid;
+        display: none;
         min-height: 100vh;
         place-items: center;
         isolation: isolate;
         animation: paper-flash 4.8s steps(1, end) infinite;
+      }
+
+      body.is-started .card {
+        display: grid;
       }
 
       .card::before {
@@ -477,8 +502,10 @@
     </style>
   </head>
   <body>
+    <button class="start-screen" type="button" aria-label="Start Zuchou card"></button>
     <main class="card" aria-label="Animated anniversary disco card for Honeypie">
       <div class="confetti" aria-hidden="true"></div>
+      <audio class="party-track" src="zuchou-shu.mp3" loop preload="auto"></audio>
       <section class="stage">
         <div class="spotlight" aria-hidden="true"></div>
         <div class="letter" aria-label="Zuchou letter animation">Z</div>
@@ -501,31 +528,43 @@
 
     <script>
       const letters = ["Z", "U", "C", "H", "O", "U"];
+      const startScreenEl = document.querySelector(".start-screen");
       const letterEl = document.querySelector(".letter");
       const confettiEl = document.querySelector(".confetti");
       const dogWrapEl = document.querySelector(".dog-wrap");
       const egyptWrapEl = document.querySelector(".egypt-wrap");
+      const partyTrackEl = document.querySelector(".party-track");
       const confettiColors = ["#ffd72e", "#ff5b93", "#22d3ee", "#ffffff", "#7cfc64"];
       const letterDelay = 650;
       const firstLetterLoopDuration = letters.length * letterDelay;
       const shadesTweenDuration = 2450;
       let letterIndex = 0;
+      let hasStarted = false;
 
-      letters.forEach((letter, index) => {
+      function startLetters() {
+        letters.forEach((letter, index) => {
+          setTimeout(() => {
+            letterEl.textContent = letter;
+            letterIndex = index;
+          }, index * letterDelay);
+        });
+
+        setInterval(() => {
+          letterIndex = (letterIndex + 1) % letters.length;
+          letterEl.textContent = letters[letterIndex];
+        }, letterDelay);
+      }
+
+      function startEgyptianCameo() {
         setTimeout(() => {
-          letterEl.textContent = letter;
-          letterIndex = index;
-        }, index * letterDelay);
-      });
+          egyptWrapEl.classList.add("is-dancing");
+        }, firstLetterLoopDuration);
+      }
 
-      setInterval(() => {
-        letterIndex = (letterIndex + 1) % letters.length;
-        letterEl.textContent = letters[letterIndex];
-      }, letterDelay);
-
-      setTimeout(() => {
-        egyptWrapEl.classList.add("is-dancing");
-      }, firstLetterLoopDuration);
+      function startPartyTrack() {
+        partyTrackEl.currentTime = 0;
+        partyTrackEl.play().catch(() => {});
+      }
 
       function scheduleShades() {
         const nextDelay = 1800 + Math.random() * 5200;
@@ -542,19 +581,37 @@
         }, nextDelay);
       }
 
-      scheduleShades();
-
-      for (let index = 0; index < 54; index += 1) {
-        const piece = document.createElement("i");
-        piece.style.setProperty("--left", `${Math.random() * 100}%`);
-        piece.style.setProperty(
-          "--piece-color",
-          confettiColors[index % confettiColors.length],
-        );
-        piece.style.setProperty("--fall-time", `${3 + Math.random() * 3.4}s`);
-        piece.style.setProperty("--fall-delay", `${Math.random() * -6}s`);
-        confettiEl.append(piece);
+      function startConfetti() {
+        for (let index = 0; index < 54; index += 1) {
+          const piece = document.createElement("i");
+          piece.style.setProperty("--left", `${Math.random() * 100}%`);
+          piece.style.setProperty(
+            "--piece-color",
+            confettiColors[index % confettiColors.length],
+          );
+          piece.style.setProperty("--fall-time", `${3 + Math.random() * 3.4}s`);
+          piece.style.setProperty("--fall-delay", `${Math.random() * -6}s`);
+          confettiEl.append(piece);
+        }
       }
+
+      function startCard() {
+        if (hasStarted) {
+          return;
+        }
+
+        hasStarted = true;
+        document.body.classList.add("is-started");
+        startPartyTrack();
+        startLetters();
+        startEgyptianCameo();
+        scheduleShades();
+        startConfetti();
+        window.removeEventListener("keydown", startCard);
+      }
+
+      startScreenEl.addEventListener("click", startCard, { once: true });
+      window.addEventListener("keydown", startCard, { once: true });
     </script>
   </body>
 </html>
