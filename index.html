@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Happy Anniversary, Honeypie</title>
     <link rel="icon" href="data:," />
+    <link rel="preload" as="image" href="zegypt.png" />
     <style>
       :root {
         --paper-a: #1e9d4f;
@@ -118,12 +119,43 @@
         display: block;
         width: 100%;
         height: auto;
-        border-radius: 44% 44% 16% 16%;
-        filter:
-          drop-shadow(0 0 0 white)
-          drop-shadow(10px 14px 0 white)
-          drop-shadow(-10px 12px 0 white)
-          drop-shadow(0 28px 26px rgb(0 0 0 / 0.28));
+      }
+
+      .egypt-wrap {
+        position: absolute;
+        bottom: -19%;
+        left: -3%;
+        width: min(39vw, 360px);
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-74%, 48%) rotate(-12deg) scale(0.88);
+        transform-origin: 48% 88%;
+      }
+
+      .egypt-wrap.is-dancing {
+        animation: egyptian-cameo 4.2s cubic-bezier(0.18, 0.82, 0.25, 1) both;
+        will-change: transform, opacity;
+      }
+
+      .egypt-flip {
+        transform-origin: 50% 68%;
+      }
+
+      .egypt-wrap.is-dancing .egypt-flip {
+        animation: egyptian-flip 0.6s steps(1, end) 5 0.58s;
+        will-change: transform;
+      }
+
+      .egypt-dog {
+        display: block;
+        width: 100%;
+        height: auto;
+        transform-origin: 50% 54%;
+      }
+
+      .egypt-wrap.is-dancing .egypt-dog {
+        animation: egyptian-arms 0.3s ease-in-out 10 0.58s;
+        will-change: transform;
       }
 
       .letter {
@@ -247,6 +279,43 @@
         }
       }
 
+      @keyframes egyptian-flip {
+        0%,
+        49.9% {
+          transform: translateX(-2%) rotate(-1deg) scaleX(1);
+        }
+        50%,
+        100% {
+          transform: translateX(2%) rotate(1deg) scaleX(-1);
+        }
+      }
+
+      @keyframes egyptian-cameo {
+        0% {
+          opacity: 0;
+          transform: translate(-74%, 48%) rotate(-12deg) scale(0.88);
+        }
+        14%,
+        84% {
+          opacity: 1;
+          transform: translate(0, 0) rotate(0deg) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-74%, 48%) rotate(-12deg) scale(0.88);
+        }
+      }
+
+      @keyframes egyptian-arms {
+        0%,
+        100% {
+          transform: scaleX(0.96) skewY(-1.5deg);
+        }
+        50% {
+          transform: scaleX(1.05) skewY(1.5deg) translateY(-1.4%);
+        }
+      }
+
       @keyframes shadow-pop {
         from {
           opacity: 0;
@@ -296,6 +365,12 @@
           width: 98%;
         }
 
+        .egypt-wrap {
+          bottom: -11%;
+          left: -9%;
+          width: 55%;
+        }
+
         .letter {
           top: 7%;
           left: 5%;
@@ -334,9 +409,14 @@
         <div class="dog-wrap">
           <img
             class="dog-cutout"
-            src="zuchoubase.png"
+            src="zuchououtlined.png"
             alt="Zuchou ready for an anniversary disco party"
           />
+        </div>
+        <div class="egypt-wrap" aria-hidden="true">
+          <div class="egypt-flip">
+            <img class="egypt-dog" src="zegypt.png" alt="" />
+          </div>
         </div>
         <div class="title">Happy Anniversary Honeypie</div>
       </section>
@@ -346,20 +426,27 @@
       const letters = ["Z", "U", "C", "H", "O", "U"];
       const letterEl = document.querySelector(".letter");
       const confettiEl = document.querySelector(".confetti");
+      const egyptWrapEl = document.querySelector(".egypt-wrap");
       const confettiColors = ["#ffd72e", "#ff5b93", "#22d3ee", "#ffffff", "#7cfc64"];
+      const letterDelay = 650;
+      const firstLetterLoopDuration = letters.length * letterDelay;
       let letterIndex = 0;
 
       letters.forEach((letter, index) => {
         setTimeout(() => {
           letterEl.textContent = letter;
           letterIndex = index;
-        }, index * 650);
+        }, index * letterDelay);
       });
 
       setInterval(() => {
         letterIndex = (letterIndex + 1) % letters.length;
         letterEl.textContent = letters[letterIndex];
-      }, 650);
+      }, letterDelay);
+
+      setTimeout(() => {
+        egyptWrapEl.classList.add("is-dancing");
+      }, firstLetterLoopDuration);
 
       for (let index = 0; index < 54; index += 1) {
         const piece = document.createElement("i");
