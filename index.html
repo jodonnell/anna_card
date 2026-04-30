@@ -121,6 +121,62 @@
         height: auto;
       }
 
+      .shades {
+        position: absolute;
+        top: 21.7%;
+        left: 38.8%;
+        z-index: 1;
+        width: 25.5%;
+        aspect-ratio: 3.7;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-150%, -260%) rotate(-24deg) scale(0.58);
+        transform-origin: 52% 48%;
+      }
+
+      .dog-wrap.shades-on .shades {
+        animation: shades-tween 2.45s cubic-bezier(0.18, 0.9, 0.24, 1) both;
+        will-change: transform, opacity;
+      }
+
+      .shades::before,
+      .shades::after {
+        position: absolute;
+        top: 8%;
+        width: 43%;
+        height: 78%;
+        content: "";
+        background:
+          linear-gradient(135deg, rgb(255 255 255 / 0.34), transparent 34%),
+          #101012;
+        border: 0.08em solid #000;
+        border-radius: 48% 48% 54% 54%;
+        box-shadow:
+          inset 0 -0.16em 0 rgb(255 255 255 / 0.08),
+          0 0.13em 0 rgb(0 0 0 / 0.24);
+      }
+
+      .shades::before {
+        left: 0;
+        transform: rotate(5deg);
+      }
+
+      .shades::after {
+        right: 0;
+        transform: rotate(-5deg);
+      }
+
+      .shades span {
+        position: absolute;
+        top: 38%;
+        left: 40%;
+        z-index: 1;
+        width: 20%;
+        height: 24%;
+        border-top: 0.1em solid #000;
+        border-radius: 50% 50% 0 0;
+      }
+
       .egypt-wrap {
         position: absolute;
         bottom: -19%;
@@ -279,6 +335,26 @@
         }
       }
 
+      @keyframes shades-tween {
+        0% {
+          opacity: 0;
+          transform: translate(-150%, -260%) rotate(-24deg) scale(0.58);
+        }
+        22% {
+          opacity: 1;
+          transform: translate(5%, -8%) rotate(7deg) scale(1.08);
+        }
+        32%,
+        74% {
+          opacity: 1;
+          transform: translate(0, 0) rotate(-4deg) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(116%, 84%) rotate(18deg) scale(0.82);
+        }
+      }
+
       @keyframes egyptian-flip {
         0%,
         49.9% {
@@ -412,6 +488,7 @@
             src="zuchououtlined.png"
             alt="Zuchou ready for an anniversary disco party"
           />
+          <div class="shades" aria-hidden="true"><span></span></div>
         </div>
         <div class="egypt-wrap" aria-hidden="true">
           <div class="egypt-flip">
@@ -426,10 +503,12 @@
       const letters = ["Z", "U", "C", "H", "O", "U"];
       const letterEl = document.querySelector(".letter");
       const confettiEl = document.querySelector(".confetti");
+      const dogWrapEl = document.querySelector(".dog-wrap");
       const egyptWrapEl = document.querySelector(".egypt-wrap");
       const confettiColors = ["#ffd72e", "#ff5b93", "#22d3ee", "#ffffff", "#7cfc64"];
       const letterDelay = 650;
       const firstLetterLoopDuration = letters.length * letterDelay;
+      const shadesTweenDuration = 2450;
       let letterIndex = 0;
 
       letters.forEach((letter, index) => {
@@ -447,6 +526,23 @@
       setTimeout(() => {
         egyptWrapEl.classList.add("is-dancing");
       }, firstLetterLoopDuration);
+
+      function scheduleShades() {
+        const nextDelay = 1800 + Math.random() * 5200;
+
+        setTimeout(() => {
+          dogWrapEl.classList.remove("shades-on");
+          void dogWrapEl.offsetWidth;
+          dogWrapEl.classList.add("shades-on");
+
+          setTimeout(() => {
+            dogWrapEl.classList.remove("shades-on");
+            scheduleShades();
+          }, shadesTweenDuration);
+        }, nextDelay);
+      }
+
+      scheduleShades();
 
       for (let index = 0; index < 54; index += 1) {
         const piece = document.createElement("i");
