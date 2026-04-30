@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Happy Anniversary, Honeypie</title>
     <link rel="icon" href="data:," />
+    <link rel="preload" as="image" href="zuchoubase.png" />
     <link rel="preload" as="image" href="zegypt.png" />
     <style>
       :root {
@@ -140,10 +141,63 @@
         transform-origin: 55% 85%;
       }
 
+      .dog-motion {
+        position: relative;
+        animation:
+          dog-roam 8.8s ease-in-out 2.2s infinite,
+          dog-flip 18s steps(1, end) 5.4s infinite;
+        transform-origin: 55% 86%;
+        will-change: transform;
+      }
+
       .dog-cutout {
         display: block;
         width: 100%;
         height: auto;
+        animation: dog-wiggle 1.15s ease-in-out 2.1s infinite;
+        transform-origin: 55% 84%;
+        will-change: transform;
+      }
+
+      .peek-zuchou {
+        position: absolute;
+        z-index: 1;
+        width: min(23vw, 190px);
+        opacity: 0;
+        pointer-events: none;
+        overflow: hidden;
+        transform-origin: 50% 28%;
+        will-change: transform, opacity;
+      }
+
+      .peek-zuchou img {
+        display: block;
+        width: 100%;
+        height: auto;
+        filter: drop-shadow(0.35rem 0.45rem 0 rgb(0 0 0 / 0.22));
+      }
+
+      .peek-zuchou--left {
+        top: 14%;
+        left: -3%;
+        height: min(16vw, 130px);
+        animation: zuchou-peek-left 19s cubic-bezier(0.18, 0.88, 0.2, 1) 4.2s infinite;
+      }
+
+      .peek-zuchou--right {
+        right: -3%;
+        bottom: 33%;
+        width: min(21vw, 170px);
+        height: min(15vw, 118px);
+        animation: zuchou-peek-right 23s cubic-bezier(0.18, 0.88, 0.2, 1) 10.8s infinite;
+      }
+
+      .peek-zuchou--top {
+        top: -1%;
+        left: 45%;
+        width: min(18vw, 145px);
+        height: min(12vw, 92px);
+        animation: zuchou-peek-top 27s cubic-bezier(0.18, 0.88, 0.2, 1) 17.4s infinite;
       }
 
       .shades {
@@ -636,6 +690,128 @@
         }
       }
 
+      @keyframes dog-roam {
+        0%,
+        100% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        12% {
+          transform: translate(-4.5%, -2.6%) rotate(-2deg);
+        }
+        23% {
+          transform: translate(3.2%, -4.1%) rotate(2.2deg);
+        }
+        36% {
+          transform: translate(5.8%, 1.2%) rotate(3deg);
+        }
+        50% {
+          transform: translate(-2.2%, -3.4%) rotate(-1.6deg);
+        }
+        64% {
+          transform: translate(-6.2%, 0.8%) rotate(-3.2deg);
+        }
+        78% {
+          transform: translate(2.8%, -2%) rotate(1.8deg);
+        }
+        90% {
+          transform: translate(-1.4%, 1.4%) rotate(-0.8deg);
+        }
+      }
+
+      @keyframes dog-flip {
+        0%,
+        58%,
+        100% {
+          scale: 1 1;
+        }
+        68%,
+        80% {
+          scale: -1 1;
+        }
+      }
+
+      @keyframes dog-wiggle {
+        0%,
+        100% {
+          transform: rotate(0deg) skewX(0deg) translateY(0);
+        }
+        22% {
+          transform: rotate(-1.7deg) skewX(-1.2deg) translateY(-0.4%);
+        }
+        44% {
+          transform: rotate(1.8deg) skewX(1deg) translateY(0.3%);
+        }
+        66% {
+          transform: rotate(-1deg) skewX(-0.7deg) translateY(-0.2%);
+        }
+        82% {
+          transform: rotate(1.1deg) skewX(0.8deg) translateY(0.2%);
+        }
+      }
+
+      @keyframes zuchou-peek-left {
+        0%,
+        67%,
+        100% {
+          opacity: 0;
+          transform: translate(-88%, 0) rotate(14deg) scale(0.84);
+        }
+        71% {
+          opacity: 1;
+          transform: translate(-22%, 0) rotate(-7deg) scale(1);
+        }
+        75% {
+          opacity: 1;
+          transform: translate(-28%, -2%) rotate(-3deg) scale(1.03);
+        }
+        80% {
+          opacity: 0;
+          transform: translate(-90%, 0) rotate(12deg) scale(0.86);
+        }
+      }
+
+      @keyframes zuchou-peek-right {
+        0%,
+        56%,
+        100% {
+          opacity: 0;
+          transform: translate(88%, 0) rotate(-15deg) scaleX(-1) scale(0.86);
+        }
+        60% {
+          opacity: 1;
+          transform: translate(24%, -1%) rotate(8deg) scaleX(-1) scale(1);
+        }
+        64% {
+          opacity: 1;
+          transform: translate(18%, -3%) rotate(3deg) scaleX(-1) scale(1.04);
+        }
+        70% {
+          opacity: 0;
+          transform: translate(90%, 0) rotate(-13deg) scaleX(-1) scale(0.86);
+        }
+      }
+
+      @keyframes zuchou-peek-top {
+        0%,
+        49%,
+        100% {
+          opacity: 0;
+          transform: translateY(-92%) rotate(180deg) scale(0.86);
+        }
+        53% {
+          opacity: 1;
+          transform: translateY(-28%) rotate(177deg) scale(1);
+        }
+        57% {
+          opacity: 1;
+          transform: translateY(-34%) rotate(183deg) scale(1.04);
+        }
+        63% {
+          opacity: 0;
+          transform: translateY(-94%) rotate(180deg) scale(0.86);
+        }
+      }
+
       @keyframes shades-tween {
         0% {
           opacity: 0;
@@ -871,6 +1047,30 @@
           width: 55%;
         }
 
+        .peek-zuchou {
+          width: 34vw;
+        }
+
+        .peek-zuchou--left {
+          top: 28%;
+          left: -4%;
+          height: 22vw;
+        }
+
+        .peek-zuchou--right {
+          right: -4%;
+          bottom: 42%;
+          width: 31vw;
+          height: 20vw;
+        }
+
+        .peek-zuchou--top {
+          top: -1%;
+          left: 42%;
+          width: 26vw;
+          height: 15vw;
+        }
+
         .letter {
           top: 7%;
           left: 5%;
@@ -936,20 +1136,31 @@
         <div class="spotlight" aria-hidden="true"></div>
         <div class="baby-z-burst" aria-hidden="true">Z</div>
         <div class="mommy-burst" aria-hidden="true">MOMMY</div>
+        <div class="peek-zuchou peek-zuchou--left" aria-hidden="true">
+          <img src="zuchoubase.png" alt="" />
+        </div>
+        <div class="peek-zuchou peek-zuchou--right" aria-hidden="true">
+          <img src="zuchoubase.png" alt="" />
+        </div>
+        <div class="peek-zuchou peek-zuchou--top" aria-hidden="true">
+          <img src="zuchoubase.png" alt="" />
+        </div>
         <div class="letter" aria-label="Zuchou letter animation">Z</div>
         <div class="lyrics" aria-live="polite">
           <div class="lyric-word"></div>
           <div class="lyric-line" aria-hidden="true"></div>
         </div>
         <div class="dog-wrap">
-          <img
-            class="dog-cutout"
-            src="zuchououtlined.png"
-            alt="Zuchou ready for an anniversary disco party"
-          />
-          <div class="heart-thought" aria-hidden="true">❤️</div>
-          <div class="masquerade-mask" aria-hidden="true"></div>
-          <div class="shades" aria-hidden="true"><span></span></div>
+          <div class="dog-motion">
+            <img
+              class="dog-cutout"
+              src="zuchououtlined.png"
+              alt="Zuchou ready for an anniversary disco party"
+            />
+            <div class="heart-thought" aria-hidden="true">❤️</div>
+            <div class="masquerade-mask" aria-hidden="true"></div>
+            <div class="shades" aria-hidden="true"><span></span></div>
+          </div>
         </div>
         <div class="egypt-wrap" aria-hidden="true">
           <div class="egypt-flip">
