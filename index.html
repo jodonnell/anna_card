@@ -308,6 +308,28 @@
         animation: letter-party 0.8s steps(1, end) infinite;
       }
 
+      .baby-z-burst {
+        position: absolute;
+        top: 44%;
+        left: 47%;
+        z-index: 0;
+        color: rgb(255 255 255 / 0.24);
+        font-size: clamp(17rem, 47vw, 37rem);
+        line-height: 0.7;
+        opacity: 0;
+        pointer-events: none;
+        text-shadow:
+          0.025em 0.025em 0 rgb(0 0 0 / 0.16),
+          -0.018em 0.018em 0 rgb(255 51 124 / 0.34),
+          0.018em -0.018em 0 rgb(49 231 255 / 0.32);
+        transform: translate(-50%, -50%) rotate(-13deg) scale(0.48);
+        transform-origin: 50% 52%;
+      }
+
+      .baby-z-burst.is-active {
+        animation: baby-z-burst 1.35s cubic-bezier(0.18, 0.9, 0.22, 1) both;
+      }
+
       .letter::before {
         position: absolute;
         inset: -0.13em -0.07em -0.1em;
@@ -638,6 +660,29 @@
         }
       }
 
+      @keyframes baby-z-burst {
+        0% {
+          opacity: 0;
+          transform: translate(-59%, -43%) rotate(-22deg) scale(0.44);
+        }
+        18% {
+          opacity: 1;
+          transform: translate(-51%, -50%) rotate(7deg) scale(1.08);
+        }
+        38% {
+          opacity: 0.9;
+          transform: translate(-47%, -47%) rotate(-8deg) scale(0.96);
+        }
+        64% {
+          opacity: 0.82;
+          transform: translate(-53%, -52%) rotate(5deg) scale(1.04);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-42%, -57%) rotate(18deg) scale(1.2);
+        }
+      }
+
       @keyframes lyric-pop {
         0% {
           opacity: 0;
@@ -690,6 +735,12 @@
           font-size: clamp(7rem, 38vw, 11rem);
         }
 
+        .baby-z-burst {
+          top: 45%;
+          left: 50%;
+          font-size: clamp(13rem, 76vw, 20rem);
+        }
+
         .lyrics {
           top: 43%;
           width: 92vw;
@@ -735,6 +786,7 @@
       <audio class="party-track" src="zuchou-shu.mp3" loop preload="auto"></audio>
       <section class="stage">
         <div class="spotlight" aria-hidden="true"></div>
+        <div class="baby-z-burst" aria-hidden="true">Z</div>
         <div class="letter" aria-label="Zuchou letter animation">Z</div>
         <div class="lyrics" aria-live="polite">
           <div class="lyric-word"></div>
@@ -770,6 +822,7 @@
       const timingMode = new URLSearchParams(window.location.search).has("timing");
       const startScreenEl = document.querySelector(".start-screen");
       const letterEl = document.querySelector(".letter");
+      const babyZBurstEl = document.querySelector(".baby-z-burst");
       const lyricWordEl = document.querySelector(".lyric-word");
       const lyricLineEl = document.querySelector(".lyric-line");
       const timingNextEl = document.querySelector(".timing-next");
@@ -970,6 +1023,13 @@
         const cueIndex = lyricCues.findIndex(
           (cue) => currentTime >= cue.start && currentTime < cue.end,
         );
+        const shouldShowBabyZ = currentTime >= 37 && currentTime < 38.14;
+
+        if (shouldShowBabyZ && !babyZBurstEl.classList.contains("is-active")) {
+          babyZBurstEl.classList.add("is-active");
+        } else if (!shouldShowBabyZ && babyZBurstEl.classList.contains("is-active")) {
+          babyZBurstEl.classList.remove("is-active");
+        }
 
         if (cueIndex < 0) {
           setLyricCue(cueIndex, -1);
